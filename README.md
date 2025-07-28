@@ -1,93 +1,113 @@
-# Challenge 1b: Multi-Collection PDF Analysis
+# Adobe Hackathon Challenge 1B – Persona-Aware PDF Section Extractor (Dockerized)
 
-## Overview
-Advanced PDF analysis solution that processes multiple document collections and extracts relevant content based on specific personas and use cases.
-
-## Project Structure
-```
-Challenge_1b/
-├── Collection 1/                    # Travel Planning
-│   ├── PDFs/                       # South of France guides
-│   ├── challenge1b_input.json      # Input configuration
-│   └── challenge1b_output.json     # Analysis results
-├── Collection 2/                    # Adobe Acrobat Learning
-│   ├── PDFs/                       # Acrobat tutorials
-│   ├── challenge1b_input.json      # Input configuration
-│   └── challenge1b_output.json     # Analysis results
-├── Collection 3/                    # Recipe Collection
-│   ├── PDFs/                       # Cooking guides
-│   ├── challenge1b_input.json      # Input configuration
-│   └── challenge1b_output.json     # Analysis results
-└── README.md
-```
-
-## Collections
-
-### Collection 1: Travel Planning
-- **Challenge ID**: round_1b_002
-- **Persona**: Travel Planner
-- **Task**: Plan a 4-day trip for 10 college friends to South of France
-- **Documents**: 7 travel guides
-
-### Collection 2: Adobe Acrobat Learning
-- **Challenge ID**: round_1b_003
-- **Persona**: HR Professional
-- **Task**: Create and manage fillable forms for onboarding and compliance
-- **Documents**: 15 Acrobat guides
-
-### Collection 3: Recipe Collection
-- **Challenge ID**: round_1b_001
-- **Persona**: Food Contractor
-- **Task**: Prepare vegetarian buffet-style dinner menu for corporate gathering
-- **Documents**: 9 cooking guides
-
-## Input/Output Format
-
-### Input JSON Structure
-```json
-{
-  "challenge_info": {
-    "challenge_id": "round_1b_XXX",
-    "test_case_name": "specific_test_case"
-  },
-  "documents": [{"filename": "doc.pdf", "title": "Title"}],
-  "persona": {"role": "User Persona"},
-  "job_to_be_done": {"task": "Use case description"}
-}
-```
-
-### Output JSON Structure
-```json
-{
-  "metadata": {
-    "input_documents": ["list"],
-    "persona": "User Persona",
-    "job_to_be_done": "Task description"
-  },
-  "extracted_sections": [
-    {
-      "document": "source.pdf",
-      "section_title": "Title",
-      "importance_rank": 1,
-      "page_number": 1
-    }
-  ],
-  "subsection_analysis": [
-    {
-      "document": "source.pdf",
-      "refined_text": "Content",
-      "page_number": 1
-    }
-  ]
-}
-```
-
-## Key Features
-- Persona-based content analysis
-- Importance ranking of extracted sections
-- Multi-collection document processing
-- Structured JSON output with metadata
+This repository contains the Dockerized solution for **Challenge 1B** of the Adobe India Hackathon. It processes PDFs in a persona-driven manner, extracts the most relevant sections based on a provided persona + job-to-be-done, and outputs structured JSON files for each input PDF.
 
 ---
 
-**Note**: This README provides a brief overview of the Challenge 1b solution structure based on available sample data. 
+## 📁 Directory Structure
+
+Adobe_Hack_ChatGPT_Abusers-1/
+├── process_pdfs.py # Main Python script for Challenge 1B
+├── requirements.txt # Python dependencies
+├── Dockerfile # Docker configuration
+├── collection2/
+│ ├── PDFs/ # Input PDFs (mounted to /app/input)
+│ └── challenge1b_input.json # Input persona/job config file
+├── output/ # Output folder for generated JSONs (mounted to /app/output)
+
+yaml
+Copy
+Edit
+
+---
+
+## 🐳 Docker Build Instructions
+
+Make sure Docker is installed and running.
+
+**Build the Docker image**:
+
+```bash
+docker build --platform linux/amd64 -t mysolution1b:123abc .
+🚀 Run the Container
+Run the container using:
+
+bash
+Copy
+Edit
+docker run --rm \
+  -v $(pwd)/collection2/PDFs:/app/input \
+  -v $(pwd)/output:/app/output \
+  --network none \
+  mysolution1b:123abc
+✅ This will automatically process all PDFs in /app/input and create one JSON file per PDF in /app/output.
+
+❗ The HuggingFace model (distiluse-base-multilingual-cased-v2) will require internet access on the first run unless pre-cached.
+
+🧠 Features
+🧾 Extracts semantic content from PDFs using:
+
+PyMuPDF
+
+pdfplumber
+
+pdf2image + pytesseract (for OCR)
+
+💬 Multilingual embedding with sentence-transformers
+
+🧠 Computes relevance scores using cosine similarity
+
+🎯 Persona- and job-driven filtering for maximum relevance
+
+🧪 Structured output per file
+
+🧪 Sample Output Format
+Each PDF generates a file like filename.json in /app/output, structured as:
+
+json
+Copy
+Edit
+{
+  "input_pdf": "sample.pdf",
+  "persona": "Hiring Manager",
+  "job_to_be_done": "Understand the candidate’s career journey",
+  "sections": [
+    {
+      "page": 2,
+      "text": "John has worked at Google for 5 years...",
+      "score": 0.92
+    },
+    ...
+  ]
+}
+🛠 Dependencies
+Installed via requirements.txt:
+
+sentence-transformers
+
+transformers
+
+PyMuPDF
+
+pdfplumber
+
+pdf2image
+
+pytesseract
+
+langdetect
+
+pandas
+
+nltk
+
+spacy
+
+networkx
+
+deep-translator
+
+jsonlines
+
+paddleocr
+
